@@ -1,0 +1,56 @@
+/* light.css - для светлой темы, импортирует styles.css и переопределяет */
+
+@import url('./styles.css');
+
+:root {
+  --primary-color: #2196f3; /* Изменение 1: основной цвет */
+  --secondary-color: #f44336; /* 2: акцент */
+  --bg-color: #ffffff; /* 3: фон */
+  --text-color: #000000; /* 4: текст */
+  --card-bg: rgba(0, 0, 0, 0.1); /* Фон карточек светлый */
+  --header-bg: rgba(255, 255, 255, 0.8); /* Шапка светлая */
+  --footer-bg: rgba(255, 255, 255, 0.8); /* Футер светлый */
+  --accent-color: #388e3c; /* Зеленый чуть темнее для контраста */
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.header {
+  background: var(--header-bg);
+}
+
+.footer {
+  background: var(--footer-bg);
+}
+
+.card {
+  background: var(--card-bg);
+}
+
+.slider__slide img {
+  filter: brightness(1.1); /* Доп. изменение для светлой: ярче */
+}
+
+.rating {
+  color: #ffd700; /* Золото, но для контраста */
+}
+
+/* Дополнительные изменения: инвертированные фильтры или цвета для иконок/изображений если нужно */
+.advantage img {
+  filter: invert(0.8); /* Пример изменения для светлой темы */
+}
+
+/* Переопределение для светлой темы */
+.slider__prev,
+.slider__next {
+  background: rgba(255, 255, 255, 0.6);
+  color: #000;
+}
+
+.slider__prev:hover,
+.slider__next:hover {
+  background: rgba(33, 150, 243, 0.8); /* светлый primary */
+}

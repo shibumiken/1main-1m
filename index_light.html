@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BestGames - Главная (Светлая тема)</title>
+  <link rel="stylesheet" href="css/light.css">
+</head>
+<body>
+  <header class="header">
+    <img class="header__logo" src="images/logo_light.png" alt="BestGames Логотип (Светлая версия)">
+    <nav class="header__nav">
+      <a href="#search">Поиск</a>
+      <a href="login.html">Войти</a>
+      <a href="profile.html">Личный кабинет</a>
+      <a href="catalog.html">Каталог игр</a>
+    </nav>
+    <!-- Для мобильной/планшетной версии: бургер-меню (статичный, без JS) -->
+    <div class="header__burger">☰</div>
+  </header>
+
+  <main class="container">
+    <section class="slider">
+      <div class="slider__slides">
+        <div class="slider__controls">
+            <button class="slider__prev" aria-label="Предыдущий слайд">←</button>
+            <button class="slider__next" aria-label="Следующий слайд">→</button>
+        </div>
+        <article class="slider__slide">
+          <img src="images/game1.jpg" alt="Новинка 1 - Описание: Экшн-игра с открытым миром">
+          <h3>Игра 1</h3>
+          <p>Стоимость: 1000 руб.</p>
+          <a href="catalog.html">Подробнее</a>
+        </article>
+        <article class="slider__slide">
+          <img src="images/game2.jpg" alt="Новинка 2 - Описание: RPG с элементами стратегии">
+          <h3>Игра 2</h3>
+          <p>Стоимость: 1500 руб.</p>
+          <a href="catalog.html">Подробнее</a>
+        </article>
+        <article class="slider__slide">
+          <img src="images/game3.jpg" alt="Новинка 3 - Описание: Шутер от первого лица">
+          <h3>Игра 3</h3>
+          <p>Стоимость: 2000 руб.</p>
+          <a href="catalog.html">Подробнее</a>
+        </article>
+      </div>
+      <div class="slider__indicators">
+        <span class="slider__indicator slider__indicator--active"></span>
+        <span class="slider__indicator"></span>
+        <span class="slider__indicator"></span>
+      </div>
+    </section>
+
+    <section id="search" class="search">
+      <input type="search" placeholder="Введите жанр, например: Action, RPG...">
+      <button>Поиск</button>
+    </section>
+
+    <section class="advantages">
+      <div class="advantage">
+        <img src="images/price_icon.png" alt="Привлекательные цены">
+        <p>Привлекательные цены</p>
+      </div>
+      <div class="advantage">
+        <img src="images/action_icon.png" alt="Ежемесячные акции">
+        <p>Ежемесячные акции</p>
+      </div>
+      <div class="advantage">
+        <img src="images/support_icon.png" alt="Круглосуточная поддержка">
+        <p>Круглосуточная поддержка</p>
+      </div>
+      <div class="advantage">
+        <img src="images/buy_icon.png" alt="Быстрая покупка">
+        <p>Быстрая покупка</p>
+      </div>
+    </section>
+    
+    <h2 class="popluar-h2">Популярные игры</h2>
+    <section class="popular">
+      <div class="card">
+        <img src="images/pop_game1.jpg" alt="Игра 1 - Action от Company1, рейтинг 5">
+        <h4>Игра 1</h4>
+        <p>Жанр: Action</p>
+        <p>Разработчик: Company1</p>
+        <div class="rating">★★★★★</div>
+        <p>Стоимость: 500 руб.</p>
+        <a href="catalog.html">В каталог</a>
+      </div>
+      <div class="card">
+        <img src="images/pop_game2.jpg" alt="Игра 2 - RPG от Company2, рейтинг 4">
+        <h4>Игра 2</h4>
+        <p>Жанр: RPG</p>
+        <p>Разработчик: Company2</p>
+        <div class="rating">★★★★☆</div>
+        <p>Стоимость: 600 руб.</p>
+        <a href="catalog.html">В каталог</a>
+      </div>
+      <div class="card">
+        <img src="images/pop_game3.jpg" alt="Игра 3 - Shooter от Company3, рейтинг 5">
+        <h4>Игра 3</h4>
+        <p>Жанр: Shooter</p>
+        <p>Разработчик: Company3</p>
+        <div class="rating">★★★★★</div>
+        <p>Стоимость: 700 руб.</p>
+        <a href="catalog.html">В каталог</a>
+      </div>
+      <div class="card">
+        <img src="images/pop_game4.jpg" alt="Игра 4 - Strategy от Company4, рейтинг 4">
+        <h4>Игра 4</h4>
+        <p>Жанр: Strategy</p>
+        <p>Разработчик: Company4</p>
+        <div class="rating">★★★★☆</div>
+        <p>Стоимость: 800 руб.</p>
+        <a href="catalog.html">В каталог</a>
+      </div>
+      <div class="card">
+        <img src="images/pop_game5.jpg" alt="Игра 5 - Adventure от Company5, рейтинг 5">
+        <h4>Игра 5</h4>
+        <p>Жанр: Adventure</p>
+        <p>Разработчик: Company5</p>
+        <div class="rating">★★★★★</div>
+        <p>Стоимость: 900 руб.</p>
+        <a href="catalog.html">В каталог</a>
+      </div>
+      <div class="card">
+        <img src="images/pop_game6.jpg" alt="Игра 6 - Simulation от Company6, рейтинг 4">
+        <h4>Игра 6</h4>
+        <p>Жанр: Simulation</p>
+        <p>Разработчик: Company6</p>
+        <div class="rating">★★★★☆</div>
+        <p>Стоимость: 1000 руб.</p>
+        <a href="catalog.html">В каталог</a>
+      </div>
+    </section>
+
+    <section class="partners">
+      <h2>Наши партнеры</h2>
+      <img src="images/partner1.png" alt="Партнер 1">
+      <img src="images/partner2.png" alt="Партнер 2">
+      <img src="images/partner3.png" alt="Партнер 3">
+      <img src="images/partner4.png" alt="Партнер 4">
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Телефон: 8-800-999-55-99</p>
+    <p>e-mail: best@games.ru</p>
+    <nav class="footer__nav">
+      <a href="#">Клиентам</a>
+      <a href="#">Партнерам</a>
+      <a href="#">О нас</a>
+      <a href="#">Контакты</a>
+    </nav>
+    <nav class="footer__nav">
+      <a href="index.html">Главная</a>
+      <a href="register.html">Регистрация</a>
+      <a href="login.html">Авторизация</a>
+      <a href="profile.html">Личный кабинет</a>
+      <a href="catalog.html">Каталог</a>
+      <a href="index.html#search">Поиск</a>
+      <a href="admin.html">Админ. панель</a>
+      <a href="index_light.html">Светлая тема</a>
+    </nav>
+  </footer>
+</body>
+</html>

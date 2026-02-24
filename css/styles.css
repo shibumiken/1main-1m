@@ -1,0 +1,569 @@
+/* styles.css - базовый для темной темы */
+
+/* Импорт шрифтов (минимум 2: Roboto для заголовков, Open Sans для текста; placeholders для медиа) */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;600&display=swap');
+
+/* Корневые переменные для тем и цветов (из медиа: предполагаю темная схема) */
+:root {
+  --primary-color: #0d47a1; /* Основной синий */
+  --secondary-color: #ff5722; /* Акцент оранжевый */
+  --bg-color: #121212; /* Темный фон */
+  --text-color: #ffffff; /* Белый текст */
+  --accent-color: #4caf50; /* Зеленый для кнопок */
+  --card-bg: rgba(255, 255, 255, 0.1); /* Фон карточек */
+  --header-bg: rgba(0, 0, 0, 0.8); /* Шапка */
+  --footer-bg: rgba(0, 0, 0, 0.8); /* Футер */
+  --font-heading: 'Roboto', sans-serif;
+  --font-body: 'Open Sans', sans-serif;
+}
+
+/* Глобальные стили для улучшения читабельности (типографика: line-height, font-size adaptive) */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6; /* Улучшение читабельности */
+  font-size: 16px; /* Базовый размер */
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  margin: 0.5em 0;
+}
+
+/* Контейнер для выравнивания */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Header: навигация, логотип (на всех страницах) */
+.header {
+  display: flex;
+  justify-content: space-between; /* Выравнивание */
+  align-items: center;
+  background: var(--header-bg);
+  padding: 1rem;
+}
+
+.header__logo {
+  width: 150px; /* Векторный логотип */
+}
+
+.header__nav {
+  display: none; /* Скрыто на мобильном, показ на десктопе */
+  gap: 1rem;
+}
+
+.header__nav a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.header__burger {
+  display: block; /* Бургер на мобильном */
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .header__nav {
+    display: flex; /* Показ на планшете+ */
+  }
+  .header__burger {
+    display: none; /* Скрыть бургер */
+  }
+}
+
+/* Слайдер: статичный, адаптивный (3 слайда, индикация) */
+.slider {
+  position: relative;
+  overflow: hidden;
+}
+
+.slider__slides {
+  display: flex;
+  width: 300%; /* Для 3 слайдов */
+  transition: transform 0.5s; /* Для вида, хотя статичный */
+}
+
+.slider__slide {
+  width: 33.33%;
+  text-align: center;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.slider__slide img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover; /* Обработка изображений */
+  border-radius: 10px; /* Стиль CSS */
+  filter: brightness(0.9); /* Улучшение */
+}
+
+.slider__slide h3 {
+  font-size: 1.5rem;
+}
+
+.slider__slide p {
+  font-size: 1.2rem;
+}
+
+.slider__slide a {
+  background: var(--accent-color);
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.slider__indicators {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.slider__indicator {
+  width: 10px;
+  height: 10px;
+  background: gray;
+  border-radius: 50%;
+  margin: 0 0.5rem;
+}
+
+.slider__indicator--active {
+  background: var(--primary-color);
+}
+
+/* Поиск: с placeholder, type=search */
+.search {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.search input[type="search"] {
+  width: 80%;
+  padding: 0.5rem;
+  font-size: 1rem; /* Адаптив типографика */
+  border: 1px solid var(--primary-color);
+  border-radius: 5px;
+}
+
+.search button {
+  padding: 0.5rem 1rem;
+  background: var(--primary-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Преимущества: баланс текст/изображение, grid */
+.advantages {
+  display: grid;
+  grid-template-columns: 1fr; /* Мобильный */
+  gap: 1rem;
+  text-align: center;
+}
+
+.advantage img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 1rem;
+}
+
+.advantage p {
+  margin: 0;
+}
+
+/* Популярные игры: 6 карточек, grid для баланса, верстка не ломается если меньше */
+.popular {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+
+.card {
+  background: var(--card-bg);
+  padding: 1rem;
+  text-align: center;
+  border-radius: 10px;
+  cursor: pointer; /* Для кликабельности */
+}
+
+.card img {
+  width: 100%;
+  border-radius: 10px;
+  filter: grayscale(0.2); /* Обработка изображений CSS */
+}
+
+.card h4 {
+  margin: 0.5rem 0;
+}
+
+.card p {
+  margin: 0.25rem 0;
+}
+
+.rating {
+  color: gold;
+  font-size: 1.2rem;
+}
+
+.card a {
+  display: block;
+  margin-top: 0.5rem;
+  background: var(--accent-color);
+  color: var(--text-color);
+  padding: 0.5rem;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+/* Партнеры: flex, wrap */
+.partners {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin: 2rem 0;
+}
+
+.partners img {
+  width: 100px;
+  margin: 1rem;
+}
+
+/* Футер: идентичный на всех */
+.footer {
+  text-align: center;
+  padding: 1rem;
+  background: var(--footer-bg);
+}
+
+.footer p {
+  margin: 0.5rem 0;
+}
+
+.footer__nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.footer__nav a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+/* Адаптивность: минимум 4 изменения на breakpoint */
+@media (min-width: 360px) {
+  body { font-size: 14px; } /* Изменение 1: размер шрифта */
+  .advantages { grid-template-columns: 1fr 1fr; } /* 2: структура грида */
+  .slider__slide { padding: 0.5rem; } /* 3: паддинг */
+  .header { padding: 0.5rem; } /* 4: паддинг шапки */
+  .search input { width: 70%; } /* + доп */
+}
+
+@media (min-width: 768px) {
+  body { font-size: 16px; } /* 1 */
+  .advantages { grid-template-columns: repeat(4, 1fr); } /* 2 */
+  .slider__slide img { max-height: 400px; } /* 3: размер изображений */
+  .popular { grid-template-columns: repeat(3, 1fr); } /* 4: структура карточек */
+  .container { max-width: 900px; } /* + */
+  .search input { width: 60%; } /* + */
+}
+
+@media (min-width: 1920px) {
+  .container { max-width: 1800px; } /* 1 */
+  .slider__slide img { max-height: 500px; } /* 2: размер изображений */
+  h2, h3 { font-size: 2.5rem; } /* 3: размер текста */
+  .popular { grid-template-columns: repeat(6, 1fr); } /* 4: структура */
+  .advantage img { width: 80px; height: 80px; } /* + */
+}
+
+/* Улучшения UI: hover для удобства, переходы */
+a:hover, button:hover, .card:hover {
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+/* Стили для форм (login, register, admin) */
+.auth-form {
+  max-width: 400px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--card-bg);
+  border-radius: 10px;
+}
+
+.auth-form h2 {
+  text-align: center;
+}
+
+.auth-form input,
+.auth-form textarea {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid var(--primary-color);
+  border-radius: 5px;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+.auth-form button {
+  padding: 0.5rem;
+  background: var(--accent-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.auth-form a {
+  text-align: center;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+/* Адаптив для форм */
+@media (min-width: 360px) {
+  .auth-form { padding: 1.5rem; } /* Доп. изменение */
+}
+
+.profile {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background: var(--card-bg);
+  border-radius: 10px;
+}
+
+.profile__info {
+  margin-bottom: 2rem;
+}
+
+.profile__info p {
+  margin: 0.5rem 0;
+}
+
+.profile__history {
+  margin-bottom: 2rem;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.history-table th, .history-table td {
+  border: 1px solid var(--primary-color);
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.history-table th {
+  background: var(--header-bg);
+}
+
+.profile__settings {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.settings__button {
+  padding: 0.5rem 1rem;
+  background: var(--accent-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.profile__settings label {
+  font-weight: bold;
+}
+
+.profile__settings select {
+  padding: 0.5rem;
+  background: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 5px;
+}
+
+/* Адаптив для таблицы */
+@media (max-width: 768px) {
+  .history-table {
+    font-size: 0.9rem;
+  }
+}
+
+.catalog {
+  margin: 2rem 0;
+}
+
+.catalog__filter {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.filter__button {
+  display: block; /* Видна на мобильном/планшете */
+  padding: 0.5rem 1rem;
+  background: var(--primary-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.filter__select {
+  display: none; /* Скрыта на мобильном */
+  padding: 0.5rem;
+  background: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 5px;
+}
+
+.catalog__games {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+/* Адаптив для фильтра и грида */
+@media (min-width: 768px) {
+  .filter__button {
+    display: none; /* Скрыта на десктопе */
+  }
+  .filter__select {
+    display: block; /* Показ на десктопе */
+  }
+  .catalog__games {
+    grid-template-columns: repeat(3, 1fr); /* Изменение структуры */
+  }
+}
+
+@media (min-width: 1920px) {
+  .catalog__games {
+    grid-template-columns: repeat(6, 1fr); /* Изменение структуры для больших экранов */
+  }
+}
+
+.admin-form {
+  max-width: 400px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--card-bg);
+  border-radius: 10px;
+}
+
+.admin-form h2 {
+  text-align: center;
+}
+
+.admin-form input,
+.admin-form textarea {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid var(--primary-color);
+  border-radius: 5px;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+.admin-form textarea {
+  min-height: 100px; /* Для описания */
+  resize: vertical;
+}
+
+.admin-form button {
+  padding: 0.5rem;
+  background: var(--accent-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Адаптив для формы */
+@media (min-width: 360px) {
+  .admin-form { padding: 1.5rem; } /* Доп. изменение */
+}
+
+/* Слайдер — элементы управления (стрелки) */
+.slider__controls {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem;
+  pointer-events: none; /* Чтобы не мешали кликам по странице */
+}
+
+.slider__prev,
+.slider__next {
+  width: 50px;
+  height: 50px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto; /* Включаем кликабельность только на кнопках */
+  transition: background 0.3s;
+}
+
+.slider__prev:hover,
+.slider__next:hover {
+  background: rgba(13, 71, 161, 0.8); /* primary-color с прозрачностью */
+}
+
+.slider__prev {
+  left: 10px;
+}
+
+.slider__next {
+  right: 10px;
+}
+
+/* Адаптив: на очень маленьких экранах уменьшаем стрелки */
+@media (max-width: 480px) {
+  .slider__prev, .slider__next {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+  }
+}
+
+.popular-h2,
+.partners h2 {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin: 4rem 0 2.5rem 0 !important;  /* огромный отступ сверху */
+  padding: 1.5rem 0;
+}

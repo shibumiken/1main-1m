@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BestGames - Личный кабинет</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="header">
+    <img class="header__logo" src="images/logo_dark.png" alt="BestGames Логотип">
+    <nav class="header__nav">
+      <a href="index.html#search">Поиск</a>
+      <a href="login.html">Войти</a>
+      <a href="profile.html">Личный кабинет</a>
+      <a href="catalog.html">Каталог игр</a>
+    </nav>
+    <div class="header__burger">☰</div>
+  </header>
+
+  <main class="container">
+    <section class="profile">
+      <h2>Личный кабинет</h2>
+      <div class="profile__info">
+        <p>E-mail: user@example.com</p>
+        <p>Фамилия: Иванов</p>
+        <p>Имя: Иван</p>
+        <p>Дата рождения: 01.01.1990</p>
+        <p>Номер телефона: +7 (999) 123-45-67</p>
+      </div>
+      <section class="profile__history">
+        <h3>История покупок</h3>
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Дата покупки</th>
+              <th>Название игры/внутриигровых предметов</th>
+              <th>Стоимость</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>15.02.2026</td>
+              <td>Игра 1</td>
+              <td>1000 руб.</td>
+            </tr>
+            <tr>
+              <td>10.02.2026</td>
+              <td>Внутриигровой предмет: Меч</td>
+              <td>500 руб.</td>
+            </tr>
+            <!-- Дополнительные строки для примера -->
+            <tr>
+              <td>05.02.2026</td>
+              <td>Игра 2</td>
+              <td>1500 руб.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <section class="profile__settings">
+        <h3>Настройки профиля</h3>
+        <button class="settings__button">Сменить пароль</button>
+        <label for="theme-select">Выбор темы:</label>
+        <select id="theme-select">
+          <option value="dark">Темная</option>
+          <option value="light">Светлая</option>
+        </select>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Телефон: 8-800-999-55-99</p>
+    <p>e-mail: best@games.ru</p>
+    <nav class="footer__nav">
+      <a href="#">Клиентам</a>
+      <a href="#">Партнерам</a>
+      <a href="#">О нас</a>
+      <a href="#">Контакты</a>
+    </nav>
+    <nav class="footer__nav">
+      <a href="index.html">Главная</a>
+      <a href="register.html">Регистрация</a>
+      <a href="login.html">Авторизация</a>
+      <a href="profile.html">Личный кабинет</a>
+      <a href="catalog.html">Каталог</a>
+      <a href="index.html#search">Поиск</a>
+      <a href="admin.html">Админ. панель</a>
+      <a href="index_light.html">Светлая тема</a>
+    </nav>
+  </footer>
+</body>
+</html>
