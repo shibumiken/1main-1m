@@ -1,0 +1,1083 @@
+Подшаг 1.1: Запусти Open Server (5 мин)
+
+Открой программу Open Server (иконка в трее или из меню Пуск).
+В панели Open Server кликни "Запустить" (зелёная кнопка). Подожди, пока все модули (Apache, PHP, MySQL) станут зелёными.
+Убедись в настройках: Модули > PHP — выбери PHP 8.1 или 8.2 (Laravel любит это), MySQL — 8.0.
+Почему упростил: Не нужно копаться в настройках, если по умолчанию OK.
+
+Подшаг 1.2: Создай домен для проекта (5 мин)
+
+В Open Server кликни "Домены" > "Добавить домен".
+Имя домена: online-learning-platform.local (просто введи это).
+Папка домена: Кликни "Создать папку" — она сама сделает C:\OpenServer\domains\online-learning-platform.local.
+Сохрани. Перезапусти сервер (красная кнопка, потом зелёная).
+Проверь: В браузере набери http://online-learning-platform.local — должна быть ошибка "No input file" или пустая страница (пока нормально, проекта нет).
+
+Подшаг 1.3: Установи Laravel в папку домена (10 мин)
+
+Открой Командную строку (CMD): Win + R, набери cmd, Enter.
+Перейди в папку домена: cd C:\OpenServer\domains\online-learning-platform.local (скопируй и вставь).
+Выполни: composer create-project laravel/laravel . (точка в конце — значит "в эту папку"). Это скачает Laravel 11 (новый, простой).
+Подожди 5–10 мин, Composer скачает всё. Если ошибка "Composer not found" — установи Composer с getcomposer.org (глобально).
+
+После установки: php artisan key:generate (сгенерирует ключ для безопасности).
+
+Подшаг 1.4: Настрой файл .env (5 мин)
+
+В папке проекта (C:\OpenServer\domains\online-learning-platform.local) открой файл .env в Notepad или VS Code (если нет VS Code — скачай бесплатно).
+Измени только эти строки (остальное оставь):textAPP_NAME=OnlineLearning  # Просто имя
+APP_URL=http://online-learning-platform.local  # Твой домен
+
+DB_DATABASE=online_learning  # Имя БД, создадим ниже
+DB_USERNAME=root  # По умолчанию
+DB_PASSWORD=  # Пусто, если не менял в Open Server
+Сохрани файл. Почему упростил: Не трогаем debug/env/key — по умолчанию OK для локалки.
+
+Подшаг 1.5: Создай базу данных (5 мин)
+
+В Open Server кликни "Инструменты" > "phpMyAdmin" (откроется в браузере).
+Логин: root, пароль: пусто (или root, если менял).
+Слева кликни "Новая" (New), имя БД: online_learning, кодировка: utf8mb4_unicode_ci (выбери из списка).
+Создай. Почему упростил: Не нужно SQL-команд, всё через GUI.
+
+Подшаг 1.6: Установи нужные пакеты (Composer) (10 мин)
+
+В CMD (в той же папке проекта): Выполни эти команды по одной:
+composer require intervention/image — для миниатюр изображений (критично для 2.10 баллов).
+composer require tymon/jwt-auth — для API токенов. После: php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider" и php artisan jwt:secret.
+composer require guzzlehttp/guzzle — для запросов к внешнему сервису (сертификаты).
+composer require barryvdh/laravel-dompdf — для PDF сертификатов. После: php artisan vendor:publish --provider="Barryvdh\DomPDF\ServiceProvider".
+composer require laravel/ui и php artisan ui bootstrap --auth — для простых форм (если шаблон на Bootstrap).
+
+Почему упростил: Только必須 пакеты, без extras. Если ошибка — composer update.
+
+Подшаг 1.7: Настрой охрану API (auth.php) (2 мин)
+
+Открой файл config/auth.php.
+Найди 'guards' и добавь (или замени):text'guards' => [
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'users',
+    ],
+    'api' => [
+        'driver' => 'jwt',
+        'provider' => 'users',
+    ],
+],
+Сохрани. Это для API авторизации (Bearer token).
+
+Подшаг 1.8: Проверь установку (3 мин)
+
+В CMD: php artisan migrate — создаст таблицы users (проверь в phpMyAdmin).
+В браузере: http://online-learning-platform.local — должна быть страница "Laravel" с логотипом.
+Если ошибка: Проверь .env (DB_HOST=127.0.0.1), перезапусти Open Server.
+
+Вариант 1: Самый частый — тебе дали файл дампа (.sql) и ты импортируешь его локально в Open Server
+
+Создай пустую базу данных в phpMyAdmin (если ещё нет):
+Открой phpMyAdmin в Open Server (Инструменты → phpMyAdmin).
+Слева → "Новая" → имя базы: например online_learning (или то имя, которое указано в задании/дампе).
+Кодировка: utf8mb4_unicode_ci (или utf8_general_ci — как в дампе).
+
+Импортируй готовый .sql файл:
+В phpMyAdmin выбери созданную базу слева.
+Сверху вкладка Импорт (Import).
+Кликни "Выберите файл" → найди свой .sql файл → внизу "Вперёд" (Go).
+Подожди (если база большая — может занять 1–5 минут).
+Готово: таблицы и данные уже внутри.
+
+Подключи Laravel к этой базе (всё в файле .env):
+Открой .env в проекте и укажи:textDB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=online_learning          # ← имя базы, которую создал/импортировал
+DB_USERNAME=root
+DB_PASSWORD=                         # пусто, если пароль root пустой (самый частый случай)
+Если в дампе/задании указан другой пользователь/пароль — пиши их.
+Сохрани .env.
+
+Очисти кэш конфигурации (чтобы Laravel "увидел" изменения):
+В командной строке (в папке проекта):textphp artisan config:clear
+php artisan cache:clear
+Проверь подключение:textphp artisan migrate --pretend(не применяет миграции, но покажет, видит ли Laravel базу. Если ошибок нет — подключение OK).Или просто открой сайт в браузере — если нет ошибок "Database connection failed", то всё работает.
+
+Вариант 2: Тебе дали доступ к уже существующей удалённой БД (не локальной)
+(Например, на хостинге: host, port, database name, user, password)
+В .env просто укажи данные от них:
+textDB_CONNECTION=mysql
+DB_HOST=имя_хоста_от_них (например mysql.hostinger.com или 123.45.67.89)
+DB_PORT=3306                  # почти всегда 3306
+DB_DATABASE=имя_базы_от_них
+DB_USERNAME=логин_от_них
+DB_PASSWORD=пароль_от_них
+Потом те же шаги 4–5 выше (config:clear и проверка).
+Важные нюансы при работе с готовой базой (чтобы не потерять баллы по критериям)
+
+Миграции не запускай (php artisan migrate), если база уже готова — иначе можешь сломать таблицы.
+В твоём задании миграции нужны только для создания своей структуры, но если дают готовую БД — используй её как есть.
+Модели подгоняй под таблицы (если имена таблиц не по Laravel-конвенции):
+В модели (например app/Models/Course.php) добавь:PHPprotected $table = 'courses_old';  // ← если таблица называется не courses
+protected $primaryKey = 'id';      // обычно id, но если другое — укажи
+public $timestamps = false;        // если в таблице нет created_at/updated_at
+Если нужно сгенерировать модели автоматически из готовой БД (очень удобно):
+Установи пакет (один раз):textcomposer require --dev reliese/laravelЗатем:textphp artisan code:models
+
+Полный вариант Шага 2 (рекомендую делать именно так, если база пустая)
+Цель: создать правильную структуру таблиц (3-я нормальная форма — связи foreign key, без дублирования данных). Это даст 0.80 балла по критерию «Таблицы приведены к 3 НФ».
+2.1. Создаём модели + миграции одной командой
+В командной строке (в папке проекта) выполняй по одной:
+Bashphp artisan make:model Course -m
+php artisan make:model Lesson -m
+php artisan make:model Order -m
+php artisan make:model Certificate -m
+Это создаст:
+
+4 модели в app/Models/
+4 файла миграций в database/migrations/
+
+Модель User уже существует (из Laravel).
+2.2. Редактируем миграции (самая важная часть)
+Открывай каждый файл миграции (они называются примерно 2025_02_25_XXXXXX_create_..._table.php) и заменяй метод up() на нужный код. Не трогай down().
+1. Курсы (courses)
+Файл: ...create_courses_table.php
+PHPpublic function up(): void
+{
+    Schema::create('courses', function (Blueprint $table) {
+        $table->id();
+        $table->string('name', 30);
+        $table->string('description', 100)->nullable();
+        $table->unsignedInteger('hours');           // max 10 проверяем в валидации
+        $table->decimal('price', 6, 2);             // например 150.00
+        $table->date('start_date');
+        $table->date('end_date');
+        $table->string('img');                      // путь к файлу, например images/mpic_abc.jpg
+        $table->timestamps();
+    });
+}
+2. Уроки (lessons)
+Файл: ...create_lessons_table.php
+PHPpublic function up(): void
+{
+    Schema::create('lessons', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('course_id')->constrained()->onDelete('cascade');
+        $table->string('name', 50);
+        $table->text('description');
+        $table->string('video_link')->nullable();
+        $table->unsignedInteger('hours');           // max 4 проверяем в валидации
+        $table->timestamps();
+    });
+}
+3. Заказы / записи студентов (orders)
+Файл: ...create_orders_table.php
+PHPpublic function up(): void
+{
+    Schema::create('orders', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        $table->foreignId('course_id')->constrained()->onDelete('cascade');
+        $table->enum('payment_status', ['pending', 'success', 'failed'])->default('pending');
+        $table->timestamps();
+    });
+}
+4. Сертификаты (certificates)
+Файл: ...create_certificates_table.php
+PHPpublic function up(): void
+{
+    Schema::create('certificates', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('order_id')->constrained()->onDelete('cascade');
+        $table->string('certificate_number', 12)->unique();
+        $table->timestamps();
+    });
+}
+2.3. Добавляем связи (relations) в модели
+Открывай каждую модель в app/Models/ и добавляй:
+Course.php
+PHP<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Course extends Model
+{
+    protected $fillable = [
+        'name', 'description', 'hours', 'price', 'start_date', 'end_date', 'img'
+    ];
+
+    public function lessons(): HasMany
+    {
+        return $this->hasMany(Lesson::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+}
+Lesson.php
+PHP<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Lesson extends Model
+{
+    protected $fillable = [
+        'course_id', 'name', 'description', 'video_link', 'hours'
+    ];
+
+    public function course(): BelongsTo
+    {
+        return $this->belongsTo(Course::class);
+    }
+}
+Order.php
+PHP<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Order extends Model
+{
+    protected $fillable = [
+        'user_id', 'course_id', 'payment_status'
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function course(): BelongsTo
+    {
+        return $this->belongsTo(Course::class);
+    }
+
+    public function certificate()
+    {
+        return $this->hasOne(Certificate::class);
+    }
+}
+Certificate.php
+PHP<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Certificate extends Model
+{
+    protected $fillable = [
+        'order_id', 'certificate_number'
+    ];
+
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class);
+    }
+}
+User.php (уже есть) — добавь только связи:
+PHPpublic function orders()
+{
+    return $this->hasMany(Order::class);
+}
+2.4. Создаём сидера для админа
+Bashphp artisan make:seeder AdminSeeder
+Файл database/seeders/AdminSeeder.php:
+PHP<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
+class AdminSeeder extends Seeder
+{
+    public function run(): void
+    {
+        User::create([
+            'name' => 'Administrator',
+            'email' => 'admin@edu.com',
+            'password' => Hash::make('course2025'),
+        ]);
+    }
+}
+В database/seeders/DatabaseSeeder.php добавь вызов:
+PHPpublic function run(): void
+{
+    $this->call(AdminSeeder::class);
+}
+2.5. Запускаем миграции и сиды
+Bashphp artisan migrate:fresh --seed
+(Опция --fresh удалит старые таблицы и создаст заново — удобно на этапе разработки.)
+Если всё прошло без ошибок → шаг 2 завершён.
+Проверь в phpMyAdmin: должны быть таблицы users, courses, lessons, orders, certificates + связи (foreign keys) видны в структуре.
+Упрощённый вариант Шага 2 (если дают готовую базу или хочешь быстрее)
+Если база уже есть (импортирована по предыдущему сообщению) или ты хочешь пропустить создание таблиц:
+
+Не создавай миграции — пропусти make:model -m.
+Создай только модели (без -m):
+
+Bashphp artisan make:model Course
+php artisan make:model Lesson
+php artisan make:model Order
+php artisan make:model Certificate
+
+В каждой модели укажи имя таблицы, если оно отличается от стандартного:
+
+PHPprotected $table = 'имя_таблицы_из_готовой_базы';   // например 'kursy' вместо 'courses'
+
+Проверь поля — в $fillable перечисли все реальные поля из таблицы (смотри в phpMyAdmin → структура таблицы).
+Связи пиши те же, что выше (hasMany, belongsTo), но подставляй правильные имена полей foreign key, если они не course_id, а например kurs_id.
+Сидера всё равно сделай — админ должен быть.
+Пропусти migrate — вместо этого просто проверь подключение:
+
+Bashphp artisan tinker
+>>> \App\Models\User::first();
+Если вернёт пользователя — база подключена и модели работают.
+
+В проекте → resources/views/admin (создай папку admin внутри views).
+Скопируй шаблон:
+Если есть готовый: распакуй zip → найди основной layout (обычно dashboard.html, admin.html или index.html).
+Переименуй его в layouts/admin.blade.php и положи в resources/views/layouts/.
+Остальные страницы (sidebar, header, footer) — если они отдельными файлами, положи в resources/views/admin/partials/ (например sidebar.blade.php, header.blade.php).
+
+Сделай базовый layout (если шаблон не готов или сломан):
+Создай файл resources/views/layouts/admin.blade.php:
+
+blade<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>@yield('title', 'Админ-панель')</title>
+    <!-- Подключи CSS из твоего шаблона, например: -->
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}"> <!-- скопируй css в public/css -->
+    <!-- Или Bootstrap, если нет шаблона -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header / Sidebar из шаблона -->
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                @include('admin.partials.sidebar')
+            </nav>
+
+            <!-- Основной контент -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                @yield('content')
+            </main>
+        </div>
+    </div>
+
+    <!-- JS из шаблона -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+Создай простой sidebar (в resources/views/admin/partials/sidebar.blade.php):
+
+blade<div class="position-sticky pt-3">
+    <ul class="nav flex-column">
+        <li class="nav-item"><a class="nav-link" href="{{ route('admin.courses') }}">Курсы</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Студенты / Записи</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ route('logout') }}">Выход</a></li>
+    </ul>
+</div>
+Все страницы админки будут @extends('layouts.admin').
+3.2. Авторизация админа (0.40 + 0.30 + 0.30)
+
+Создай контроллер:Bashphp artisan make:controller AdminAuthController
+В routes/web.php добавь (в самый конец):
+
+PHPuse App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\LessonController;
+use App\Http\Controllers\OrderController;
+
+// Гостевые роуты (логин)
+Route::get('/course-admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/course-admin/login', [AdminAuthController::class, 'login']);
+
+// Защищённые роуты
+Route::prefix('course-admin')->middleware('auth')->group(function () {
+    Route::get('/', [CourseController::class, 'index'])->name('admin.courses');
+    // Дальше добавим курсы, уроки и т.д.
+    Route::resource('courses', CourseController::class);
+    Route::resource('courses.lessons', LessonController::class)->scoped(['lesson' => 'id']);
+    Route::get('orders', [OrderController::class, 'index'])->name('admin.orders');
+});
+
+В AdminAuthController.php:
+
+PHP<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class AdminAuthController extends Controller
+{
+    public function showLoginForm()
+    {
+        return view('admin.login');
+    }
+
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email'    => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->route('admin.courses');
+        }
+
+        return back()->withErrors([
+            'email' => 'Неверный email или пароль',
+        ])->onlyInput('email');
+    }
+}
+
+Создай страницу логина resources/views/admin/login.blade.php:
+
+blade@extends('layouts.admin')
+
+@section('title', 'Вход в админ-панель')
+
+@section('content')
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h2>Авторизация администратора</h2>
+
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        {{ $errors->first() }}
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('admin.login') }}">
+                    @csrf
+                    <div class="mb-3">
+                        <label>Email</label>
+                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}">
+                        @error('email')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Пароль</label>
+                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror">
+                        @error('password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Войти</button>
+                </form>
+            </div>
+        </div>
+    </div>
+@endsection
+
+Зайди: http://online-learning-platform.local/course-admin/login
+Логин: admin@edu.com / course2025
+Должен редиректнуть на список курсов.
+
+3.3. CRUD Курсов (основной кусок)
+
+Создай контроллер:Bashphp artisan make:controller CourseController
+В CourseController.php (полный код):
+
+PHP<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Course;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
+
+class CourseController extends Controller
+{
+    public function index()
+    {
+        $courses = Course::paginate(5); // строго 5 на страницу!
+        return view('admin.courses.index', compact('courses'));
+    }
+
+    public function create()
+    {
+        return view('admin.courses.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name'        => 'required|max:30',
+            'description' => 'nullable|max:100',
+            'hours'       => 'required|integer|max:10',
+            'price'       => 'required|numeric|min:100',
+            'start_date'  => 'required|date',
+            'end_date'    => 'required|date|after_or_equal:start_date',
+            'img'         => 'required|image|mimes:jpeg,jpg|max:2048',
+        ]);
+
+        $path = $request->file('img')->store('images', 'public');
+
+        // Миниатюра mpic*
+        $filename = 'mpic_' . basename($path);
+        $thumbnailPath = 'images/' . $filename;
+        Image::make(storage_path('app/public/' . $path))
+            ->resize(300, 300, function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            })
+            ->save(storage_path('app/public/' . $thumbnailPath));
+
+        Course::create($validated + ['img' => $thumbnailPath]);
+
+        return redirect()->route('admin.courses')->with('success', 'Курс создан');
+    }
+
+    // edit, update, destroy — аналогично, но update без required на img
+    // destroy с проверкой:
+    public function destroy(Course $course)
+    {
+        if ($course->orders()->where('payment_status', 'success')->exists()) {
+            return back()->with('error', 'Нельзя удалить курс с оплаченными студентами');
+        }
+
+        Storage::disk('public')->delete($course->img);
+        $course->delete();
+
+        return redirect()->route('admin.courses')->with('success', 'Курс удалён');
+    }
+}
+
+Создай views в resources/views/admin/courses/:
+index.blade.php — список с таблицей, пагинацией {!! $courses->links() !!}
+create.blade.php и edit.blade.php — формы с @error под каждым полем (как в login).
+
+Вот продолжение Шага 3 — создание views для админ-панели курсов, а потом уроки, записи студентов и сертификат.
+Я пишу конкретный код, который можно скопировать-вставить, с объяснением, где именно создать файл и почему так.
+3.4. Views для курсов (resources/views/admin/courses/)
+Создай папку resources/views/admin/courses/ (если ещё нет).
+1. index.blade.php — список курсов с пагинацией (строго 5 на страницу)
+resources/views/admin/courses/index.blade.php
+blade@extends('layouts.admin')
+
+@section('title', 'Список курсов')
+
+@section('content')
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Курсы</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a href="{{ route('courses.create') }}" class="btn btn-sm btn-outline-secondary">Создать курс</a>
+        </div>
+    </div>
+
+    @if (session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @if (session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
+
+    <div class="table-responsive">
+        <table class="table table-striped table-sm">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Название</th>
+                    <th>Описание</th>
+                    <th>Часы</th>
+                    <th>Цена</th>
+                    <th>Начало</th>
+                    <th>Конец</th>
+                    <th>Обложка</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($courses as $course)
+                    <tr>
+                        <td>{{ $course->id }}</td>
+                        <td>{{ $course->name }}</td>
+                        <td>{{ $course->description ?? '-' }}</td>
+                        <td>{{ $course->hours }}</td>
+                        <td>{{ number_format($course->price, 2) }}</td>
+                        <td>{{ $course->start_date->format('d-m-Y') }}</td>
+                        <td>{{ $course->end_date->format('d-m-Y') }}</td>
+                        <td>
+                            @if ($course->img)
+                                <img src="{{ Storage::url($course->img) }}" alt="Обложка" width="80" height="80" style="object-fit: cover;">
+                            @else
+                                Нет
+                            @endif
+                        </td>
+                        <td>
+                            <a href="{{ route('courses.edit', $course) }}" class="btn btn-sm btn-warning">Ред.</a>
+                            <form action="{{ route('courses.destroy', $course) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Удалить курс?')">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr><td colspan="9" class="text-center">Курсов пока нет</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Пагинация строго по 5 (Laravel Bootstrap) -->
+    <div class="d-flex justify-content-center">
+        {{ $courses->links() }}
+    </div>
+@endsection
+Важно:
+
+Storage::url($course->img) — показывает миниатюру (mpic_...)
+{!! $courses->links() !!} — использует Bootstrap-стиль пагинации (если ui bootstrap установлен)
+
+2. create.blade.php — форма создания курса
+resources/views/admin/courses/create.blade.php
+blade@extends('layouts.admin')
+
+@section('title', 'Создать курс')
+
+@section('content')
+    <h1 class="h2 mb-4">Создать новый курс</h1>
+
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('courses.store') }}" enctype="multipart/form-data">
+        @csrf
+
+        <div class="mb-3">
+            <label class="form-label">Название курса <span class="text-danger">*</span></label>
+            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}">
+            @error('name')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Описание</label>
+            <textarea name="description" class="form-control @error('description') is-invalid @enderror" rows="3">{{ old('description') }}</textarea>
+            @error('description')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Продолжительность (часы) <span class="text-danger">*</span></label>
+            <input type="number" name="hours" class="form-control @error('hours') is-invalid @enderror" value="{{ old('hours') }}">
+            @error('hours')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Цена (xx.xx) <span class="text-danger">*</span></label>
+            <input type="number" name="price" step="0.01" class="form-control @error('price') is-invalid @enderror" value="{{ old('price') }}">
+            @error('price')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Дата начала (дд-мм-гггг) <span class="text-danger">*</span></label>
+            <input type="date" name="start_date" class="form-control @error('start_date') is-invalid @enderror" value="{{ old('start_date') }}">
+            @error('start_date')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Дата окончания (дд-мм-гггг) <span class="text-danger">*</span></label>
+            <input type="date" name="end_date" class="form-control @error('end_date') is-invalid @enderror" value="{{ old('end_date') }}">
+            @error('end_date')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Обложка (JPG, max 2MB) <span class="text-danger">*</span></label>
+            <input type="file" name="img" class="form-control @error('img') is-invalid @enderror" accept="image/jpeg,image/jpg">
+            @error('img')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <button type="submit" class="btn btn-primary">Создать курс</button>
+        <a href="{{ route('admin.courses') }}" class="btn btn-secondary">Отмена</a>
+    </form>
+@endsection
+3. edit.blade.php — форма редактирования (почти как create, но с заполненными данными)
+resources/views/admin/courses/edit.blade.php
+blade@extends('layouts.admin')
+
+@section('title', 'Редактировать курс')
+
+@section('content')
+    <h1 class="h2 mb-4">Редактировать курс: {{ $course->name }}</h1>
+
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('courses.update', $course) }}" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
+
+        <!-- Те же поля, что в create, но с value="{{ old('name', $course->name) }}" -->
+        <div class="mb-3">
+            <label class="form-label">Название курса <span class="text-danger">*</span></label>
+            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $course->name) }}">
+            @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Описание</label>
+            <textarea name="description" class="form-control @error('description') is-invalid @enderror" rows="3">{{ old('description', $course->description) }}</textarea>
+            @error('description') <div class="invalid-feedback">{{ $message }}</div> @enderror
+        </div>
+
+        <!-- ... остальные поля аналогично, с old() или $course->... -->
+
+        <div class="mb-3">
+            <label class="form-label">Текущая обложка:</label><br>
+            @if ($course->img)
+                <img src="{{ Storage::url($course->img) }}" alt="Обложка" width="150">
+            @endif
+            <br><small>Загрузите новую, если хотите заменить</small>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Новая обложка (JPG, max 2MB)</label>
+            <input type="file" name="img" class="form-control @error('img') is-invalid @enderror" accept="image/jpeg,image/jpg">
+            @error('img') <div class="invalid-feedback">{{ $message }}</div> @enderror
+        </div>
+
+        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+        <a href="{{ route('admin.courses') }}" class="btn btn-secondary">Отмена</a>
+    </form>
+@endsection
+Для остальных полей в edit — скопируй структуру из create и замени value на {{ old('поле', $course->поле) }}.
+
+
+
+
+
+
+
+
+API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-API-
+
+
+4.1. Настраиваем routes/api.php
+Открываем файл routes/api.php и полностью заменяем его содержимое на такое (или добавляем в конец, если там уже что-то есть):
+PHP<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CourseController;
+use App\Http\Controllers\Api\OrderController;
+
+// Публичные роуты (регистрация и авторизация)
+Route::post('/registr', [AuthController::class, 'register']);
+Route::post('/auth',    [AuthController::class, 'login']);
+
+// Защищённые роуты (требуют Bearer token)
+Route::middleware('auth:api')->group(function () {
+
+    // Список всех курсов (с пагинацией)
+    Route::get('/courses', [CourseController::class, 'index']);
+
+    // Детали курса + список уроков
+    Route::get('/courses/{course}', [CourseController::class, 'show']);
+
+    // Запись / покупка курса
+    Route::post('/courses/{course}/buy', [OrderController::class, 'buy']);
+
+    // Список моих записей (заказов)
+    Route::get('/orders', [OrderController::class, 'myOrders']);
+
+    // Отмена записи (только если не оплачено)
+    Route::delete('/orders/{order}', [OrderController::class, 'cancel']);
+});
+
+// Webhook от платёжной системы (без авторизации!)
+Route::post('/payment-webhook', [OrderController::class, 'webhook']);
+Важно:
+Адрес API будет http://online-learning-platform.local/school-api/...
+(префикс /api добавляется автоматически в Laravel 10+)
+4.2. Создаём контроллеры для API
+Выполни в терминале:
+Bashphp artisan make:controller Api/AuthController
+php artisan make:controller Api/CourseController
+php artisan make:controller Api/OrderController
+4.3. AuthController — регистрация и авторизация
+app/Http/Controllers/Api/AuthController.php
+PHP<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
+class AuthController extends Controller
+{
+    public function register(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|min:3|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[_#!%]).+$/',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Invalid fields',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        $user = User::create([
+            'email'    => $request->email,
+            'password' => Hash::make($request->password),
+            // name можно не требовать, если в задании только email+password
+        ]);
+
+        return response()->json(['success' => true], 201);
+    }
+
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email'    => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Invalid data',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        $credentials = $request->only('email', 'password');
+
+        if (!$token = JWTAuth::attempt($credentials)) {
+            return response()->json([
+                'message' => 'Invalid data',
+                'errors'  => ['email' => ['Invalid data']],
+            ], 422);
+        }
+
+        return response()->json(['token' => $token], 200);
+    }
+}
+4.4. CourseController — курсы и уроки
+app/Http/Controllers/Api/CourseController.php
+PHP<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Course;
+use App\Models\Lesson;
+use Illuminate\Http\Request;
+
+class CourseController extends Controller
+{
+    public function index(Request $request)
+    {
+        $perPage = $request->query('per_page', 10); // можно менять, но по ТЗ часто 5–10
+        $courses = Course::paginate($perPage);
+
+        return response()->json([
+            'data' => $courses->map(function ($course) {
+                return [
+                    'id'          => $course->id,
+                    'name'        => $course->name,
+                    'description' => $course->description,
+                    'hours'       => $course->hours,
+                    'img'         => $course->img ? asset('storage/' . $course->img) : null,
+                    'start_date'  => $course->start_date->format('d-m-Y'),
+                    'end_date'    => $course->end_date->format('d-m-Y'),
+                    'price'       => number_format($course->price, 2, '.', ''),
+                ];
+            }),
+            'pagination' => [
+                'total'     => $courses->lastPage(),
+                'current'   => $courses->currentPage(),
+                'per_page'  => $courses->perPage(),
+            ]
+        ]);
+    }
+
+    public function show($id)
+    {
+        $course = Course::findOrFail($id);
+        $lessons = Lesson::where('course_id', $id)->get();
+
+        return response()->json([
+            'data' => $lessons->map(function ($lesson) {
+                return [
+                    'id'          => $lesson->id,
+                    'name'        => $lesson->name,
+                    'description' => $lesson->description,
+                    'video_link'  => $lesson->video_link,
+                    'hours'       => $lesson->hours,
+                ];
+            })
+        ]);
+    }
+}
+4.5. OrderController — покупка, мои курсы, отмена, webhook
+app/Http/Controllers/Api/OrderController.php
+PHP<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Course;
+use App\Models\Order;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+
+class OrderController extends Controller
+{
+    public function buy(Request $request, $courseId)
+    {
+        $course = Course::findOrFail($courseId);
+
+        $now = Carbon::now();
+
+        if ($now < $course->start_date || $now > $course->end_date) {
+            return response()->json(['message' => 'Нельзя записаться — курс не в периоде проведения'], 422);
+        }
+
+        // Проверяем, не записан ли уже
+        if (Order::where('user_id', auth()->id())->where('course_id', $courseId)->exists()) {
+            return response()->json(['message' => 'Вы уже записаны на этот курс'], 422);
+        }
+
+        $order = Order::create([
+            'user_id'        => auth()->id(),
+            'course_id'      => $courseId,
+            'payment_status' => 'pending',
+        ]);
+
+        // Здесь по ТЗ возвращаем pay_url — можно фейковый
+        $payUrl = "https://fake-payment.example.com/pay/{$order->id}";
+
+        return response()->json(['pay_url' => $payUrl], 200);
+    }
+
+    public function myOrders()
+    {
+        $orders = auth()->user()->orders()->with('course')->get();
+
+        return response()->json([
+            'data' => $orders->map(function ($order) {
+                $course = $order->course;
+                return [
+                    'id' => $order->id,
+                    'payment_status' => $order->payment_status,
+                    'course' => [
+                        'id'          => $course->id,
+                        'name'        => $course->name,
+                        'description' => $course->description,
+                        'hours'       => $course->hours,
+                        'img'         => $course->img ? asset('storage/' . $course->img) : null,
+                        'start_date'  => $course->start_date->format('d-m-Y'),
+                        'end_date'    => $course->end_date->format('d-m-Y'),
+                        'price'       => number_format($course->price, 2, '.', ''),
+                    ]
+                ];
+            })
+        ]);
+    }
+
+    public function cancel($orderId)
+    {
+        $order = Order::where('id', $orderId)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        if ($order->payment_status === 'success') {
+            return response()->json(['status' => 'was payed'], 418);
+        }
+
+        $order->delete();
+
+        return response()->json(['status' => 'success'], 200);
+    }
+
+    public function webhook(Request $request)
+    {
+        // В реальности здесь нужна проверка подписи, но по ТЗ — просто обновляем
+        $orderId = $request->input('order_id');
+        $status  = $request->input('status'); // success | failed
+
+        if (!$orderId || !in_array($status, ['success', 'failed'])) {
+            return response('', 204); // всё равно 204
+        }
+
+        $order = Order::find($orderId);
+        if ($order) {
+            $order->payment_status = $status;
+            $order->save();
+        }
+
+        return response('', 204);
+    }
+}
+4.6. Что проверить после реализации
+
+Регистрация: POST /school-api/registr → 201 + {success:true}
+Авторизация: POST /school-api/auth → 200 + {token: "..."}
+Список курсов: GET /school-api/courses с заголовком Authorization: Bearer {token}
+Уроки курса: GET /school-api/courses/1
+Запись: POST /school-api/courses/1/buy
+Мои курсы: GET /school-api/orders
+Отмена: DELETE /school-api/orders/5 → 200 или 418 если оплачено
+Webhook: POST /school-api/payment-webhook → всегда 204
